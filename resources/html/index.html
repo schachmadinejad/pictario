@@ -1,0 +1,35 @@
+<html>
+<head>
+  <title>Pictario</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="logic.js"></script>
+</head>
+<body onkeypress="handleEnter()">
+  <div id="highscore"></div>
+  <div id="painter">
+    <div id="info">
+      <h1 id="counter">
+      </h1>
+      <h1 id="title">
+      </h1>
+    </div>
+    <div id="toolbox">
+      <button class="tool" id="crayon" onclick="setLine()">Crayon</button>
+      <button class="tool" id="pencil" onclick="setLine()">Pencil</button>
+      <button class="tool" id="background" onclick="sendBackground()">Background</button>
+      <button class="tool" id="erase" onclick="setLine()">Erase</button>
+      <button class="tool" id="clear" onclick="sendBackground('white')">Clear</button>
+      <div id="tooloptions" hidden></div>
+    </div>
+    <canvas id="picture" onmousedown="startPainting()" onmousemove="doPaint()" onmouseup="stopPainting()" onmouseout="stopPainting()">
+    </canvas>
+  </div>
+  <div id="chat">
+    <div id="history">
+
+    </div>
+    Message: <input type="text" id="message_box">
+    <button type="button" id="send" onclick="sendMessage()">Send</button>
+  </div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+#highscore {
+  width: 20%;
+  height: 100%;
+  float: left;
+}
+  .user {
+    width: 95%;
+    background: rgba(66, 244, 72, 0.4);
+    border: solid 2px #42F448;
+    padding-top: 10%;
+    padding-bottom: 10%;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+#painter {
+  width: 60%;
+  height: 100%;
+  float: left;
+}
+
+  #info {
+    width: 100%;
+    height: 10%;
+  }
+
+  #toolbox {
+    width: 10%;
+    height: 90%;
+    float: left;
+  }
+
+  .tool {
+    width: 100%;
+    padding-top: 40%;
+    padding-bottom: 40%;
+    word-wrap: break-word;
+  }
+
+  #picture {
+    float: left;
+  }
+
+#chat {
+  width: 20%;
+  height: 100%;
+  float: right;
+}
+
+  #history {
+    width: 100%;
+    height: 97%;
+    overflow-wrap: break-word;
+  }
+
+    .chatmessage {
+      font-size: 12;
+      font-family: sans-serif;
+    }
+
+      .messageheader {
+        display: inline;
+        font-weight: bold;
+      }
+
+        .messagedate {
+          display: inline;
+        }
+
+        .messagename {
+          display: inline;
+        }
+
+      .messagecontent {
+        display: inline;
+      }
