@@ -63,22 +63,62 @@ function addClick(x, y) {
 /**
  * Sets the stroke style for all line tools.
  */
-function setLine() {
-  var settings = predefined[event.srcElement.id];
+function setLine(size) {
+  var settings = predefined[event.srcElement.id]; //gets settings depending on which tool was selected
   if (settings === undefined) {
     console.error('User tried to access undefined line tool ' + event.srcElement.id + '.');
   }
   context.strokeStyle = settings.strokeStyle;
   context.lineWidth = settings.lineWidth;
+
+  addLineOptions(settings.lineWidth); //adds the options for our tool in the tooloptions box
 }
 
 /**
- * Sets the background to a color (default: black).
+ * Ensures buttons for setting background color are present as needed.
  */
-function sendBackground(fillStyle = 'black') {
+function setBackground() {
+  var box = document.getElementById('tooloptions');
+
+  //checks for linesize option and removes it if present
+  if (document.getElementById('linesize')) {
+    removeSizeChooser(box);
+  }
+  //checks for state of color chooser
+  if (!document.getElementById('white')) {  //if not present add it
+    addColorChooser(box, 'sendBackground()');
+  } else if (document.getElementById('white').getAttribute('onclick') === 'setColor()') { //if present but with wrong logic change logic
+    document.querySelectorAll('button.color').forEach(function changeColorButtonHandlerToBackground(button) {
+      button.setAttribute('onclick', 'sendBackground()');
+    });
+  }
+
+  box.removeAttribute('hidden');
+}
+
+/**
+ * Clears the background. (i.e. resets to white)
+ */
+function clearBackground() {
+  sendBackground('white');  //sets background to white
+  //removes tool options for other tools if present
+  var box = document.getElementById('tooloptions');
+  if (document.getElementById('linesize')) {
+    removeSizeChooser(box);
+  }
+  if (document.getElementById('white')) {
+    removeColorChooser(box);
+  }
+  box.setAttribute('hidden');
+}
+
+/**
+ * Sets the background to a color.
+ */
+function sendBackground(color) {
   var back = {};
   back.type = 'background';
-  back.fillStyle = fillStyle;
+  back.fillStyle = color ? color : event.srcElement.id;
   com.send(JSON.stringify(back));
 }
 
@@ -164,7 +204,7 @@ function receivedCommand(event) {
       break;
 
       case 'background':
-        setBackground(command);
+        colorBackground(command);
       break;
 
       case 'deleteuser':
@@ -214,7 +254,7 @@ function makeStroke(stroke) {
  * Sets the background of the canvas.
  * @param {object} back The command object describing the background.
  */
-function setBackground(back) {
+function colorBackground(back) {
   context.fillStyle = back.fillStyle;
   context.fillRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
 }
@@ -302,6 +342,113 @@ function setChatHistory(history) {
   history.forEach(function addOneMessageFromHistoryToHistory(message) {
     addChatMessage(message.date, message.name, message.message)
   })
+}
+
+/**
+ * Adds the tool options for line tools.
+ * @param {number} size The line size for the specific tool
+ */
+function addLineOptions(size) {
+  var box = document.getElementById('tooloptions');
+  //checks for state of color chooser
+  if (!document.getElementById('white')) {  //if not present load it
+    addColorChooser(box, 'setColor()');
+  } else if (document.getElementById('white').getAttribute('onclick') === 'sendBackground()') { //if wrong logic (background) change logic
+    document.querySelectorAll('button.color').forEach(function changeColorButtonHandlerToBackground(button) {
+      button.setAttribute('onclick', 'setColor()');
+    });
+  }
+  //checks state of size chooser
+  if (!document.getElementById('linesize')) { //if not present load it
+    addSizeChooser(box, size);
+  } else {  //if present adjust size according to our tool
+    document.getElementById('linesize').value = size;
+  }
+  //show the box
+  box.removeAttribute('hidden');
+}
+
+/**
+ * Adds the buttons for choosing color to the tool-options box.
+ * @param  {DomNode} box The tool-options box.
+ */
+function addColorChooser(box, click) {
+  //the 16 web colors
+  var colors = ['white', 'silver', 'gray', 'black', 'red', 'maroon', 'yellow', 'olive', 'lime', 'green', 'aqua', 'teal', 'blue', 'navy', 'fuchsia', 'purple'];
+
+  //creates the heading
+  var button = document.createElement('p');
+  button.id = 'colorheading';
+  button.appendChild(document.createTextNode('Choose color:'));
+  box.appendChild(button);
+
+  //creates the color buttons
+  colors.forEach(function addColorButtonsToOptions(color) {
+    button = document.createElement('button');
+
+    button.className = 'color';
+    button.id = color;
+    button.style = 'background:' + color + ';';
+    button.setAttribute('onclick', click);
+
+    box.appendChild(button);
+  });
+}
+
+/**
+ * Removes color chooser from tool options.
+ * @param  {DomNode} box The toolbox from whence color chooser shall be removed.
+ */
+function removeColorChooser(box) {
+  box.removeChild(document.getElementById('colorheading'));
+  document.querySelectorAll('button.color').forEach(function deleteColorButtonsFromOptions(button) {
+    box.removeChild(button);
+  });
+}
+
+/**
+ * Sets the stroke style to the color name hidden inside the id of the pressed color button.
+ */
+function setColor() {
+  context.strokeStyle = event.srcElement.id;
+}
+
+/**
+ * Adds the size chooser to the tooloptions box.
+ * @param {DomNode} box  The toolotions box to add to.
+ * @param {number} size The line size of the respective tool.
+ */
+function addSizeChooser(box, size) {
+  //creates the heading
+  var el = document.createElement('p');
+  el.id = 'sizeheading';
+  el.appendChild(document.createTextNode('Choose size:'));
+  box.appendChild(el);
+  //creates the input for linesize
+  el = document.createElement('input');
+  el.id = 'linesize'
+  el.type = 'text';
+  el.value = size;
+  el.setAttribute('oninput', 'setSize()');
+
+  box.appendChild(el);
+}
+
+/**
+ * Removes the size chooser from the tooloptions box.
+ * @param  {DomNode} box The tooloptions box from whence to remove.
+ */
+function removeSizeChooser(box) {
+  box.removeChild(document.getElementById('sizeheading'));
+  box.removeChild(document.getElementById('linesize'));
+}
+
+/**
+ * Sets the size of the brush.
+ */
+function setSize() {
+  console.log(Number(event.srcElement.value));
+  context.lineWidth = Number(event.srcElement.value);
 }
 
 /**

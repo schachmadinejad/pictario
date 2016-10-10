@@ -30,12 +30,21 @@
     float: left;
   }
 
-  .tool {
-    width: 100%;
-    padding-top: 40%;
-    padding-bottom: 40%;
-    word-wrap: break-word;
-  }
+    .color {
+      width: 20px;
+      height: 20px;
+    }
+
+    #linesize {
+      width: 30px;
+    }
+
+    .tool {
+      width: 100%;
+      padding-top: 40%;
+      padding-bottom: 40%;
+      word-wrap: break-word;
+    }
 
   #picture {
     float: left;

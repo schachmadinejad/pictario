@@ -16,9 +16,9 @@
     <div id="toolbox">
       <button class="tool" id="crayon" onclick="setLine()">Crayon</button>
       <button class="tool" id="pencil" onclick="setLine()">Pencil</button>
-      <button class="tool" id="background" onclick="sendBackground()">Background</button>
       <button class="tool" id="erase" onclick="setLine()">Erase</button>
-      <button class="tool" id="clear" onclick="sendBackground('white')">Clear</button>
+      <button class="tool" id="background" onclick="setBackground()">Background</button>
+      <button class="tool" id="clear" onclick="clearBackground()">Clear</button>
       <div id="tooloptions" hidden></div>
     </div>
     <canvas id="picture" onmousedown="startPainting()" onmousemove="doPaint()" onmouseup="stopPainting()" onmouseout="stopPainting()">
