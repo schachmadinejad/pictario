@@ -5,7 +5,12 @@
   <script src="logic.js"></script>
 </head>
 <body onkeypress="handleEnter()">
-  <div id="highscore"></div>
+  <div id="user_info">
+    <div id="user_list">
+    </div>
+    Username: <input type="text" id="name_box">
+    <button type="button" id="send" onclick="changeName()">Change</button>
+  </div>
   <div id="painter">
     <div id="info">
       <h1 id="counter">

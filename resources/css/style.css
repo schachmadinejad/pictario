@@ -1,17 +1,29 @@
-#highscore {
+/* TODO: Remove in production */
+div {
+  border: 1px solid black;
+  box-sizing: border-box;
+}
+
+#user_info {
   width: 20%;
   height: 100%;
   float: left;
 }
-  .user {
-    width: 95%;
-    background: rgba(66, 244, 72, 0.4);
-    border: solid 2px #42F448;
-    padding-top: 10%;
-    padding-bottom: 10%;
-    text-align: center;
-    margin-bottom: 20px;
+
+  #user_list {
+    width: 100%;
+    height: 97%;
   }
+
+    .user {
+      width: 95%;
+      background: rgba(66, 244, 72, 0.4);
+      border: solid 2px #42F448;
+      padding-top: 10%;
+      padding-bottom: 10%;
+      text-align: center;
+      margin-bottom: 20px;
+    }
 
 #painter {
   width: 60%;

@@ -130,11 +130,12 @@ function resizeCanvas(snapshot) {
   var painter = document.getElementById('painter'); //the containing div
   var canvas = document.getElementById('picture');  //the canvas element
   //sets variables for later use (e.g. normalizing coordinates)
-  variables.width = painter.offsetWidth * 0.9;
-  variables.height = painter.offsetHeight * 0.9;
+  // TODO: remove -2 in production
+  variables.width = painter.offsetWidth * 0.9 - 2;
+  variables.height = painter.offsetHeight * 0.9 - 2;
   //sets the size of the canvas
-  canvas.width = variables.width;
-  canvas.height = variables.height;
+  canvas.width = variables.width - 2;
+  canvas.height = variables.height - 2;
   //if snapshot is provided, we set the canvas to this image
   if (snapshot !== undefined) {
     var img = new Image();
@@ -188,6 +189,20 @@ function sendMessage() {
 }
 
 /**
+ * Sends a name change request to the server.
+ */
+function changeName() {
+  var box = document.getElementById('name_box');
+  var content = box.value; box.value = '';
+  var message = {};
+
+  message.type = 'nameChangeRequest';
+  message.name = content;
+
+  com.send(JSON.stringify(message));
+}
+
+/**
  * This method handles incoming commands from the server.
  * @param  {event} event The message event from the Websocket.
  */
@@ -213,6 +228,14 @@ function receivedCommand(event) {
 
       case 'adduser':
         addUser(command.name);
+      break;
+
+      case 'userNameChange':
+        changeUserName(command.former, command.new);
+      break;
+
+      case 'nameAlreadyTaken':
+        addErrorMessage('User name already taken');
       break;
 
       case 'userlist':
@@ -260,11 +283,11 @@ function colorBackground(back) {
 }
 
 /**
- * Adds a new user to the highscore list.
+ * Adds a new user to the user_list list.
  * @param {string} name The name of the new user.
  */
 function addUser(name) {
-  var userBar = document.getElementById('highscore'); //gets the div containing all users
+  var userBar = document.getElementById('user_list'); //gets the div containing all users
   var userDiv = document.createElement('div');
 
   userDiv.className = 'user'; //for styling
@@ -275,12 +298,32 @@ function addUser(name) {
 }
 
 /**
- * Deletes a disconnected user from the highscore list.
+ * Deletes a disconnected user from the user_list list.
  * @param  {string} name The name of the disconnected user.
  */
 function deleteUser(name) {
-  var userBar = document.getElementById('highscore');
+  var userBar = document.getElementById('user_list');
   userBar.removeChild(document.getElementById(name)); //every div has the name of the user as id
+}
+
+/**
+ * Changes the user name of the respective user in our UI.
+ * @param  {string} formerName The former name of the user.
+ * @param  {string} newName    The new name of the user.
+ */
+function changeUserName(formerName, newName) {
+  var user = document.getElementById(formerName);
+  user.id = name;
+  user.removeChild(user.firstChild);
+  user.appendChild(document.createTextNode(newName));
+}
+
+/**
+ * Adds an error message to the chat.
+ * @param {string} text The message text of the error.
+ */
+function addErrorMessage(text) {
+  addChatMessage("ERROR", "SYSTEM", text);
 }
 
 /**
@@ -288,9 +331,9 @@ function deleteUser(name) {
  * @param {array} users The array containing the names of all users.
  */
 function setUserList(users) {
-  var userBar = document.getElementById('highscore');
+  var userBar = document.getElementById('user_list');
 
-  if (userBar.firstChild) {
+  if (userBar.querySelector('div.user')) {
     console.error('Client got user list but already has users.'); //this command should only be sent to newly connected clients
   } else {
     users.forEach(addUser);
@@ -447,7 +490,6 @@ function removeSizeChooser(box) {
  * Sets the size of the brush.
  */
 function setSize() {
-  console.log(Number(event.srcElement.value));
   context.lineWidth = Number(event.srcElement.value);
 }
 
